@@ -27,7 +27,7 @@ export default function RootLayout({
         <Link className="p-2 hover:bg-customGreen" href="/NumberStepper">Number Stepper</Link>
       </li>
       <li>
-        <Link className="p-2 hover:bg-customGreen" href="/Fullstack">Fullstack</Link>
+        <Link className="p-2 hover:bg-customGreen" href="/Triona">Triona</Link>
       </li>
     </ul>
       </header>

@@ -13,7 +13,7 @@
   }
 
   h1{
-    @apply ml-auto mr-auto text-left mb-5 font-semibold text-3xl;
+    @apply max-w-2xl ml-auto mr-auto text-left mb-5 font-semibold text-3xl;
   }
 
   h2{
@@ -33,7 +33,7 @@
   }
 
   button{
-    @apply bg-customGreen text-white font-semibold pt-2.5 pb-2.5 pl-5 pr-5 m-1 border-customGreen border hover:bg-amber-900 hover:border-amber-900 rounded-2xl;    
+    @apply bg-customGreen text-white font-semibold pt-2.5 pb-2.5 pl-5 pr-5 m-1 border-customGreen border hover:bg-amber-900 hover:border-amber-900 rounded-3xl;    
   }
 
   form{
@@ -45,7 +45,7 @@
   }
 
   input{
-    @apply m-1 p-1 text-customBlue;    
+    @apply m-1 text-customBlue;    
   }
 
 
