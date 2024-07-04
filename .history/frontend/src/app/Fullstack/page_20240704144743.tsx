@@ -3,6 +3,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+
 type User = {
     id: number;
     name: string;
@@ -13,11 +14,12 @@ type User = {
     isLeapYearBirthday: string;
 };
 
+
 export default function Fullstack() {
     const [name, setName] = useState("Petter");
     const [address, setaddress] = useState("Tiller");
     const [phone, setPhone] = useState("97562249");
-    const [birthday, setBirthday] = useState("1990-01-01");
+    const [birthday, setBirthday] = useState("");
     const [leapYear, setLeapYear] = useState("");
     const [tverrsum, setTverrsum] = useState(0);
     const [users, setUsers] = useState<User[]>([]);
@@ -54,6 +56,10 @@ export default function Fullstack() {
         setEditedUser(prev => ({ ...prev, [name]: value }));
     };
 
+
+
+
+
     function formatDate(dateString: string) {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('nb-NO', options);
@@ -72,6 +78,9 @@ export default function Fullstack() {
             console.log('setLeapYear("Nei")');
         };
     }
+
+
+
 
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -156,7 +165,7 @@ export default function Fullstack() {
                     <label htmlFor="phone">Telefonnummer<span className='text-red-500'>*</span></label>
                     <input id="phone" type="tel" value={phone} onChange={handlePhoneChange} required />
                     <label htmlFor="birthday">Fødselsdag<span className='text-red-500'>*</span></label>
-                    <input id="birthday" type="date" defaultValue="1990-01-01" value={birthday} onChange={handleDateChange} required />
+                    <input id="birthday" type="date" value={birthday} onChange={handleDateChange} required />
                     <button type="submit" value="Submit">Legg til bruker</button>
                 </div>
             </form>

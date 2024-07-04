@@ -17,7 +17,7 @@ export default function Fullstack() {
     const [name, setName] = useState("Petter");
     const [address, setaddress] = useState("Tiller");
     const [phone, setPhone] = useState("97562249");
-    const [birthday, setBirthday] = useState("1990-01-01");
+    const [birthday, setBirthday] = useState("");
     const [leapYear, setLeapYear] = useState("");
     const [tverrsum, setTverrsum] = useState(0);
     const [users, setUsers] = useState<User[]>([]);

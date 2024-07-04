@@ -3,6 +3,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+
 type User = {
     id: number;
     name: string;
@@ -13,11 +14,12 @@ type User = {
     isLeapYearBirthday: string;
 };
 
+
 export default function Fullstack() {
     const [name, setName] = useState("Petter");
     const [address, setaddress] = useState("Tiller");
     const [phone, setPhone] = useState("97562249");
-    const [birthday, setBirthday] = useState("1990-01-01");
+    const [birthday, setBirthday] = useState("");
     const [leapYear, setLeapYear] = useState("");
     const [tverrsum, setTverrsum] = useState(0);
     const [users, setUsers] = useState<User[]>([]);
@@ -49,10 +51,14 @@ export default function Fullstack() {
         // Oppdater brukerlisten her etter vellykket oppdatering
     };
 
-    const handleUpdateUserChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setEditedUser(prev => ({ ...prev, [name]: value }));
     };
+
+
+
+
 
     function formatDate(dateString: string) {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -73,6 +79,14 @@ export default function Fullstack() {
         };
     }
 
+    const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const newBirthday = event.target.value;
+        setBirthday(newBirthday);
+        console.log("Skuddår: " + leapYear);
+        isLeapYear(newBirthday);
+    }
+
+
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     }
@@ -86,13 +100,6 @@ export default function Fullstack() {
         setPhone(newPhone);
         const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
         setTverrsum(newTverrsum);
-    }
-
-    const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newBirthday = event.target.value;
-        setBirthday(newBirthday);
-        console.log("Skuddår: " + leapYear);
-        isLeapYear(newBirthday);
     }
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -156,8 +163,8 @@ export default function Fullstack() {
                     <label htmlFor="phone">Telefonnummer<span className='text-red-500'>*</span></label>
                     <input id="phone" type="tel" value={phone} onChange={handlePhoneChange} required />
                     <label htmlFor="birthday">Fødselsdag<span className='text-red-500'>*</span></label>
-                    <input id="birthday" type="date" defaultValue="1990-01-01" value={birthday} onChange={handleDateChange} required />
-                    <button type="submit" value="Submit">Legg til bruker</button>
+                    <input id="birthday" type="date" value={birthday} onChange={handleDateChange} required />
+                    <button type="submit" value="Submit">Send inn</button>
                 </div>
             </form>
 
@@ -169,10 +176,10 @@ export default function Fullstack() {
                                 {editingUserId === user.id ? (
                                     // Vis input-felter for redigering
                                     <ul key={user.id} className='mt-2 mb-2'>
-                                        <li><input name="name" value={editedUser.name} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="address" value={editedUser.address} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="phone" value={editedUser.phone} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="birthday" type="date" value={editedUser.birthday} onChange={handleUpdateUserChange} /></li>
+                                        <li><input name="name" value={editedUser.name} onChange={handleChange} /></li>
+                                        <li><input name="address" value={editedUser.address} onChange={handleChange} /></li>
+                                        <li><input name="phone" value={editedUser.phone} onChange={handleChange} /></li>
+                                        <li><input name="birthday" type="date" value={editedUser.birthday} onChange={handleChange} /></li>
                                         <li><button onClick={handleUpdateClick}>Oppdater</button></li>
                                     </ul>
                                 ) : (
@@ -189,10 +196,12 @@ export default function Fullstack() {
                                                 <button onClick={() => handleEditClick(user)}>Endre</button>
                                                 <button onClick={() => deleteUser(user.id)}>Fjern</button>
                                             </div>
-
                                         </li>
                                     </ul>
+
                                 )}
+
+
                             </div>
                         ))}
                     </div>
