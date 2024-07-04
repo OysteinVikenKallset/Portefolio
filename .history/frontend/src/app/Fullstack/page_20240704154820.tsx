@@ -1,7 +1,9 @@
 "use client"
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import Task from './Task';
+
 import axios from 'axios';
+import UsersList from './UsersList';
+import { formatDate } from './UtilityFunctions';
 
 type User = {
     id: number;
@@ -153,63 +155,18 @@ export default function Fullstack() {
 
     return (
         <div>
-            <h1>Frontend og backend</h1>
-            <form onSubmit={handleSubmit}>
-                <div className='flex flex-col'>
-                    <label htmlFor="name">Navn<span className='text-red-500'> *</span></label>
-                    <input id="name" type="text" value={name} onChange={handleNameChange} required />
-                    <label htmlFor="address">Addresse<span className='text-red-500'> *</span></label>
-                    <input id="address" type="text" value={address} onChange={handleaddressChange} required />
-                    <label htmlFor="phone">Telefonnummer<span className='text-red-500'> *</span></label>
-                    <input id="phone" type="tel" value={phone} onChange={handlePhoneChange} required />
-                    <label htmlFor="birthday">Fødselsdag<span className='text-red-500'> *</span></label>
-                    <input id="birthday" type="date" defaultValue="1990-01-01" value={birthday} onChange={handleDateChange} required />
-                    <button type="submit" value="Submit">Legg til bruker</button>
-                </div>
-            </form>
-
-            <div>
-                {users.length > 0 && (
-                    <div className='flex flex-row flex-wrap'>
-                        {users.map(user => (
-                            <div key={user.id} className='p-2 m-2 rounded-3xl bg-amber-200 text-black'>
-                                {editingUserId === user.id ? (
-                                    // Vis input-felter for redigering
-                                    <ul key={user.id} className='mt-2 mb-2'>
-                                        <li><input name="name" value={editedUser.name} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="address" value={editedUser.address} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="phone" value={editedUser.phone} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="birthday" type="date" value={editedUser.birthday} onChange={handleUpdateUserChange} /></li>
-                                        <li><button onClick={handleUpdateClick}>Oppdater</button></li>
-                                    </ul>
-                                ) : (
-                                    <ul key={user.id} className='mt-2 mb-2'>
-                                        <li > <span className='font-semibold'>Id: </span> {user.id}</li>
-                                        <li > <span className='font-semibold'>Navn: </span> {user.name}</li>
-                                        <li > <span className='font-semibold'>Address: </span>{user.address}</li>
-                                        <li > <span className='font-semibold'>Phone: </span>{user.phone}</li>
-                                        <li > <span className='font-semibold'>Birthday: </span>{formatDate(user.birthday)}</li>
-                                        <li > <span className='font-semibold'>Tverrsum: </span>{user.phoneDigitSum}</li>
-                                        <li > <span className='font-semibold'>Skuddår: </span>{user.isLeapYearBirthday ? 'Ja' : 'Nei'}</li>
-                                        <li>
-                                            <div>
-                                                <button onClick={() => handleEditClick(user)}>Endre</button>
-                                                <button onClick={() => deleteUser(user.id)}>Fjern</button>
-                                            </div>
-
-                                        </li>
-                                    </ul>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            <div>
-
-           
-            </div>
+        {users.length > 0 && (
+            <UsersList
+              users={users}
+              editingUserId={editingUserId}
+              editedUser={editedUser}
+              handleUpdateUserChange={handleUpdateUserChange}
+              handleUpdateClick={handleUpdateClick}
+              handleEditClick={handleEditClick}
+              deleteUser={deleteUser}
+              formatDate={formatDate}
+            />
+          )}
         </div>
 
     )

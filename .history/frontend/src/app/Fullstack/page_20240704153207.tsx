@@ -64,7 +64,7 @@ export default function Fullstack() {
         return new Date(dateString).toLocaleDateString('nb-NO', options);
     }
 
-    /*function isLeapYear(birthdayDate: string) {
+    function isLeapYear(birthdayDate: string) {
         const year = new Date(birthdayDate).getFullYear();
         console.log("Function: isLeapYear");
         console.log("Birthday: " + birthdayDate);
@@ -76,7 +76,7 @@ export default function Fullstack() {
             setLeapYear("Nei");
             console.log('setLeapYear("Nei")');
         };
-    }*/
+    }
 
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -156,13 +156,13 @@ export default function Fullstack() {
             <h1>Frontend og backend</h1>
             <form onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
-                    <label htmlFor="name">Navn<span className='text-red-500'> *</span></label>
+                    <label htmlFor="name">Navn<span className='text-red-500'>*</span></label>
                     <input id="name" type="text" value={name} onChange={handleNameChange} required />
-                    <label htmlFor="address">Addresse<span className='text-red-500'> *</span></label>
+                    <label htmlFor="address">Addresse<span className='text-red-500'>*</span></label>
                     <input id="address" type="text" value={address} onChange={handleaddressChange} required />
-                    <label htmlFor="phone">Telefonnummer<span className='text-red-500'> *</span></label>
+                    <label htmlFor="phone">Telefonnummer<span className='text-red-500'>*</span></label>
                     <input id="phone" type="tel" value={phone} onChange={handlePhoneChange} required />
-                    <label htmlFor="birthday">Fødselsdag<span className='text-red-500'> *</span></label>
+                    <label htmlFor="birthday">Fødselsdag<span className='text-red-500'>*</span></label>
                     <input id="birthday" type="date" defaultValue="1990-01-01" value={birthday} onChange={handleDateChange} required />
                     <button type="submit" value="Submit">Legg til bruker</button>
                 </div>

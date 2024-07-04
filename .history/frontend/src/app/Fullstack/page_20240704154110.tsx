@@ -179,7 +179,7 @@ export default function Fullstack() {
                                         <li><input name="name" value={editedUser.name} onChange={handleUpdateUserChange} /></li>
                                         <li><input name="address" value={editedUser.address} onChange={handleUpdateUserChange} /></li>
                                         <li><input name="phone" value={editedUser.phone} onChange={handleUpdateUserChange} /></li>
-                                        <li><input name="birthday" type="date" value={editedUser.birthday} onChange={handleUpdateUserChange} /></li>
+                                        <li><input name="birthday" type="date" defaultValue="1990-01-01" value={editedUser.birthday} onChange={handleUpdateUserChange} /></li>
                                         <li><button onClick={handleUpdateClick}>Oppdater</button></li>
                                     </ul>
                                 ) : (

@@ -18,16 +18,12 @@ export default function Fullstack() {
     const [address, setaddress] = useState("Tiller");
     const [phone, setPhone] = useState("97562249");
     const [birthday, setBirthday] = useState("1990-01-01");
-    /*const [leapYear, setLeapYear] = useState("");
-    const [tverrsum, setTverrsum] = useState(0);*/
+    const [leapYear, setLeapYear] = useState("");
+    const [tverrsum, setTverrsum] = useState(0);
     const [users, setUsers] = useState<User[]>([]);
     const [editingUserId, setEditingUserId] = useState<number>();
     const [editedUser, setEditedUser] = useState({ name: '', address: '', phone: '', birthday: '' });
-    
-  
-
-
-
+    const { totalUsers, averageNameLength, leapYearCount } = calculateStatistics(users);
 
     const handleEditClick = (user: User) => {
         setEditingUserId(user.id);
@@ -64,7 +60,7 @@ export default function Fullstack() {
         return new Date(dateString).toLocaleDateString('nb-NO', options);
     }
 
-    /*function isLeapYear(birthdayDate: string) {
+    function isLeapYear(birthdayDate: string) {
         const year = new Date(birthdayDate).getFullYear();
         console.log("Function: isLeapYear");
         console.log("Birthday: " + birthdayDate);
@@ -76,7 +72,7 @@ export default function Fullstack() {
             setLeapYear("Nei");
             console.log('setLeapYear("Nei")');
         };
-    }*/
+    }
 
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -89,15 +85,15 @@ export default function Fullstack() {
     const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newPhone = event.target.value;
         setPhone(newPhone);
-        /*const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
-        setTverrsum(newTverrsum);*/
+        const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
+        setTverrsum(newTverrsum);
     }
 
     const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newBirthday = event.target.value;
         setBirthday(newBirthday);
-       /* console.log("Skuddår: " + leapYear);
-        isLeapYear(newBirthday);*/
+        console.log("Skuddår: " + leapYear);
+        isLeapYear(newBirthday);
     }
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -149,20 +145,31 @@ export default function Fullstack() {
             });
     }
 
-
+    function calculateStatistics(users) {
+        const totalUsers = users.length;
+        const totalNameLength = users.reduce((acc, user) => acc + user.name.length, 0);
+        const averageNameLength = totalUsers > 0 ? totalNameLength / totalUsers : 0;
+      
+        const leapYearCount = users.filter(user => {
+          const year = new Date(user.birthDate).getFullYear();
+          return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+        }).length;
+      
+        return { totalUsers, averageNameLength, leapYearCount };
+      }
 
     return (
         <div>
             <h1>Frontend og backend</h1>
             <form onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
-                    <label htmlFor="name">Navn<span className='text-red-500'> *</span></label>
+                    <label htmlFor="name">Navn<span className='text-red-500'>*</span></label>
                     <input id="name" type="text" value={name} onChange={handleNameChange} required />
-                    <label htmlFor="address">Addresse<span className='text-red-500'> *</span></label>
+                    <label htmlFor="address">Addresse<span className='text-red-500'>*</span></label>
                     <input id="address" type="text" value={address} onChange={handleaddressChange} required />
-                    <label htmlFor="phone">Telefonnummer<span className='text-red-500'> *</span></label>
+                    <label htmlFor="phone">Telefonnummer<span className='text-red-500'>*</span></label>
                     <input id="phone" type="tel" value={phone} onChange={handlePhoneChange} required />
-                    <label htmlFor="birthday">Fødselsdag<span className='text-red-500'> *</span></label>
+                    <label htmlFor="birthday">Fødselsdag<span className='text-red-500'>*</span></label>
                     <input id="birthday" type="date" defaultValue="1990-01-01" value={birthday} onChange={handleDateChange} required />
                     <button type="submit" value="Submit">Legg til bruker</button>
                 </div>
@@ -207,8 +214,8 @@ export default function Fullstack() {
             </div>
 
             <div>
-
-           
+            <h2>Statistikk</h2>
+            
             </div>
         </div>
 
