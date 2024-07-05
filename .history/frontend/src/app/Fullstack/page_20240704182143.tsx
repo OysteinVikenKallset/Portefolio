@@ -24,16 +24,8 @@ export default function Fullstack() {
     const [editingUserId, setEditingUserId] = useState<number>();
     const [editedUser, setEditedUser] = useState({ name: '', address: '', phone: '', birthday: '' });
     
+  
 
-    //Henter Users når siden lastes, og når brukere oppdateres
-    useEffect(() => {
-        usersGet();
-    }, []);
-
-
-    /** 
-     * Update User (Hjelpefunksjoner til usersPut)
-     */
 
 
 
@@ -43,8 +35,23 @@ export default function Fullstack() {
     };
 
     const handleUpdateClick = () => {
-        usersPut();
+        axios.put(`http://localhost:5177/api/Users/${editingUserId}`, {
+            id: editingUserId,
+            name: editedUser.name,
+            address: editedUser.address,
+            phone: editedUser.phone,
+            birthday: editedUser.birthday
+        })
+            .then(response => {
+                console.log(response);
+                getUsers();
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
         setEditingUserId(0);
+        // Oppdater brukerlisten her etter vellykket oppdatering
     };
 
     const handleUpdateUserChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,17 +59,24 @@ export default function Fullstack() {
         setEditedUser(prev => ({ ...prev, [name]: value }));
     };
 
-//Setter datoen på riktig format
-
     function formatDate(dateString: string) {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('nb-NO', options);
     }
 
-
-    /**
-     * Oppdaterer state på variablene når det gjøres endringer i inputfeltet i form
-     */
+    /*function isLeapYear(birthdayDate: string) {
+        const year = new Date(birthdayDate).getFullYear();
+        console.log("Function: isLeapYear");
+        console.log("Birthday: " + birthdayDate);
+        console.log("Year: " + year);
+        if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+            setLeapYear("Ja");
+            console.log('setLeapYear("Ja")');
+        } else {
+            setLeapYear("Nei");
+            console.log('setLeapYear("Nei")');
+        };
+    }*/
 
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -75,122 +89,75 @@ export default function Fullstack() {
     const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newPhone = event.target.value;
         setPhone(newPhone);
+        /*const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
+        setTverrsum(newTverrsum);*/
     }
 
     const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newBirthday = event.target.value;
         setBirthday(newBirthday);
+       /* console.log("Skuddår: " + leapYear);
+        isLeapYear(newBirthday);*/
     }
-
-
-    //Innsending av kontaktskjema
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Forhindrer formen i å sende en HTTP POST request
-        userPost(name, address, phone, birthday);
-        
+
+        userPost; 
     };
-    
 
+    const userPost = () =>{
+        axios.post('http://localhost:5177/api/Users', {
+            id: 0,
+            name: name,
+            address: address,
+            phone: phone,
+            birthday: birthday
+        })
+            .then(response => {
+                console.log(response);
+                getUsers();
 
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
 
-    /**
-     * apiServices
-     */
+    useEffect(() => {
+        getUsers();
+    }, []);
 
-    const usersGet = () => {
+    const getUsers = () => {
         axios.get('http://localhost:5177/api/Users')
             .then(response => {
                 // Behandle responsen her
                 console.log(response.data);
                 setUsers(response.data);
-               
-             
             })
             .catch(error => {
                 console.log(error.response);
             });
     }
 
-    const userPost = (newName: string, newAdress: string, newPhone: string, newBirthday: string) => {
-        axios.post('http://localhost:5177/api/Users', {
-            id: 0,
-            name: newName,
-            address: newAdress,
-            phone: newPhone,
-            birthday: newBirthday
-        })
-            .then(response => {
-                console.log(response);
-                usersGet();
-               
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
-
-    const usersPut = () => {
-        axios.put(`http://localhost:5177/api/Users/${editingUserId}`, {
-            id: editingUserId,
-            name: editedUser.name,
-            address: editedUser.address,
-            phone: editedUser.phone,
-            birthday: editedUser.birthday
-        })
-            .then(response => {
-                console.log(response);
-                usersGet();
-
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
-
-    const usersDelete = (userId: number) => {
+    const deleteUser = (userId: number) => {
         axios.delete(`http://localhost:5177/api/Users/${userId}`)
             .then(response => {
+                // Behandle responsen her
                 console.log(response.data);
-                usersGet();
+                setUsers(response.data);
+                getUsers();
             })
             .catch(error => {
                 console.log(error.response);
             });
-            
     }
 
-    //Beregner statistikk
-
-    const calculateStatistics = () => {
-        const totalUsers = users.length;
-        let sumNameLength = 0;
-        let leapYearBirthdays = 0;
-    
-        users.forEach(user => {
-            sumNameLength += user.name.length;
-            if (user.isLeapYearBirthday) { 
-                leapYearBirthdays++;
-            }
-        });
-    
-        const averageNameLength = totalUsers > 0 ? sumNameLength / totalUsers : 0;
-    
-        return {
-            averageNameLength,
-            leapYearBirthdays,
-            totalUsers
-        };
-    };
-
-    const { averageNameLength, leapYearBirthdays, totalUsers } = calculateStatistics();
 
 
     return (
         <div>
             <h1>Frontend og backend</h1>
-           
-            
             <form onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
                     <label htmlFor="name">Navn<span className='text-red-500'> *</span></label>
@@ -231,7 +198,7 @@ export default function Fullstack() {
                                         <li>
                                             <div>
                                                 <button onClick={() => handleEditClick(user)}>Endre</button>
-                                                <button onClick={() => usersDelete(user.id)}>Fjern</button>
+                                                <button onClick={() => deleteUser(user.id)}>Fjern</button>
                                             </div>
 
                                         </li>
@@ -244,11 +211,8 @@ export default function Fullstack() {
             </div>
 
             <div>
-                <h2>Statistikk</h2>
-                <p>Gjennomsnittlig lengde på navn: {averageNameLength}</p>
-                <p>Antall personer født i skuddår: {leapYearBirthdays}</p>
-                <p>Totalt antall brukere: {totalUsers}</p>
 
+           
             </div>
         </div>
 

@@ -3,6 +3,39 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+/**
+ * 
+Steg 1:
+Problemet med funksjonaliteten er at statistikk ikke er på plass
+- Jeg må regne ut antall brukere
+- Jeg må regne ut gjennomsnittlengden på navnene
+- Jeg må regne ut antall personer født i skuddår. 
+
+Steg 2:
+Deretter bør jeg få lastet opp backend til Microsoft Azure og Frontend, enten til Azure, eller til Vercel.
+
+
+Plan:
+For å gjøre dette må jeg forstå koden min:
+
+Brukergrensenitt:
+
+- Kontaktskjema
+-- Legg til ny bruker
+
+- User-cards
+-- Fjern bruker
+-- Endre bruker
+-- Oppdater bruker
+
+- Statistikk
+-- Antall brukere
+-- Gjennomsnittlig lengde på navn
+-- Antall brukere født i skuddår
+
+
+ */
+
 type User = {
     id: number;
     name: string;
@@ -35,7 +68,28 @@ export default function Fullstack() {
      * Update User (Hjelpefunksjoner til usersPut)
      */
 
+    const calculateStatistics = () => {
+        const totalUsers = users.length;
+        let sumNameLength = 0;
+        let leapYearBirthdays = 0;
+    
+        users.forEach(user => {
+            sumNameLength += user.name.length;
+            if (user.isLeapYearBirthday) { 
+                leapYearBirthdays++;
+            }
+        });
+    
+        const averageNameLength = totalUsers > 0 ? sumNameLength / totalUsers : 0;
+    
+        return {
+            averageNameLength,
+            leapYearBirthdays,
+            totalUsers
+        };
+    };
 
+    const { averageNameLength, leapYearBirthdays, totalUsers } = calculateStatistics();
 
     const handleEditClick = (user: User) => {
         setEditingUserId(user.id);
@@ -52,7 +106,9 @@ export default function Fullstack() {
         setEditedUser(prev => ({ ...prev, [name]: value }));
     };
 
-//Setter datoen på riktig format
+    /** 
+ * Update User
+ */
 
     function formatDate(dateString: string) {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -82,9 +138,12 @@ export default function Fullstack() {
         setBirthday(newBirthday);
     }
 
+    /**
+     * Oppdaterer state på variablene når det gjøres endringer i inputfeltet i form
+     */
+
 
     //Innsending av kontaktskjema
-
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Forhindrer formen i å sende en HTTP POST request
         userPost(name, address, phone, birthday);
@@ -151,6 +210,7 @@ export default function Fullstack() {
     const usersDelete = (userId: number) => {
         axios.delete(`http://localhost:5177/api/Users/${userId}`)
             .then(response => {
+                // Behandle responsen her
                 console.log(response.data);
                 usersGet();
             })
@@ -160,30 +220,10 @@ export default function Fullstack() {
             
     }
 
-    //Beregner statistikk
+    /**
+ * apiServices
+ */
 
-    const calculateStatistics = () => {
-        const totalUsers = users.length;
-        let sumNameLength = 0;
-        let leapYearBirthdays = 0;
-    
-        users.forEach(user => {
-            sumNameLength += user.name.length;
-            if (user.isLeapYearBirthday) { 
-                leapYearBirthdays++;
-            }
-        });
-    
-        const averageNameLength = totalUsers > 0 ? sumNameLength / totalUsers : 0;
-    
-        return {
-            averageNameLength,
-            leapYearBirthdays,
-            totalUsers
-        };
-    };
-
-    const { averageNameLength, leapYearBirthdays, totalUsers } = calculateStatistics();
 
 
     return (

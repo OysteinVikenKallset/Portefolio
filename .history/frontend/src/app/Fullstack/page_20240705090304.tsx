@@ -3,6 +3,39 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+/**
+ * 
+Steg 1:
+Problemet med funksjonaliteten er at statistikk ikke er på plass
+- Jeg må regne ut antall brukere
+- Jeg må regne ut gjennomsnittlengden på navnene
+- Jeg må regne ut antall personer født i skuddår. 
+
+Steg 2:
+Deretter bør jeg få lastet opp backend til Microsoft Azure og Frontend, enten til Azure, eller til Vercel.
+
+
+Plan:
+For å gjøre dette må jeg forstå koden min:
+
+Brukergrensenitt:
+
+- Kontaktskjema
+-- Legg til ny bruker
+
+- User-cards
+-- Fjern bruker
+-- Endre bruker
+-- Oppdater bruker
+
+- Statistikk
+-- Antall brukere
+-- Gjennomsnittlig lengde på navn
+-- Antall brukere født i skuddår
+
+
+ */
+
 type User = {
     id: number;
     name: string;

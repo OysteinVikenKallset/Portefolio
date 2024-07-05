@@ -3,6 +3,39 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+/**
+ * 
+Steg 1:
+Problemet med funksjonaliteten er at statistikk ikke er på plass
+- Jeg må regne ut antall brukere
+- Jeg må regne ut gjennomsnittlengden på navnene
+- Jeg må regne ut antall personer født i skuddår. 
+
+Steg 2:
+Deretter bør jeg få lastet opp backend til Microsoft Azure og Frontend, enten til Azure, eller til Vercel.
+
+
+Plan:
+For å gjøre dette må jeg forstå koden min:
+
+Brukergrensenitt:
+
+- Kontaktskjema
+-- Legg til ny bruker
+
+- User-cards
+-- Fjern bruker
+-- Endre bruker
+-- Oppdater bruker
+
+- Statistikk
+-- Antall brukere
+-- Gjennomsnittlig lengde på navn
+-- Antall brukere født i skuddår
+
+
+ */
+
 type User = {
     id: number;
     name: string;
@@ -23,19 +56,35 @@ export default function Fullstack() {
     const [users, setUsers] = useState<User[]>([]);
     const [editingUserId, setEditingUserId] = useState<number>();
     const [editedUser, setEditedUser] = useState({ name: '', address: '', phone: '', birthday: '' });
-    
+
 
     //Henter Users når siden lastes, og når brukere oppdateres
     useEffect(() => {
         usersGet();
+       
     }, []);
 
+    /*
+    const calculateStatistics = () =>{
+        let i = 0;
+        users.forEach(user => {
+            
+            Object.entries(user).forEach(([key, value]) => {
+                if(key == "isLeapYearBirthday" && value){
+                    console.log(value);
+                    console.log(i);
+                        i++;
+                }
+                    
+            });
+        });
+        setSumLeapYear(i);
+        console.log('Antall brukere med bursdag i skuddår:', i);
+    }*/
 
     /** 
      * Update User (Hjelpefunksjoner til usersPut)
      */
-
-
 
     const handleEditClick = (user: User) => {
         setEditingUserId(user.id);
@@ -45,6 +94,7 @@ export default function Fullstack() {
     const handleUpdateClick = () => {
         usersPut();
         setEditingUserId(0);
+        // Oppdater brukerlisten her etter vellykket oppdatering
     };
 
     const handleUpdateUserChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +102,9 @@ export default function Fullstack() {
         setEditedUser(prev => ({ ...prev, [name]: value }));
     };
 
-//Setter datoen på riktig format
+    /** 
+ * Update User
+ */
 
     function formatDate(dateString: string) {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -75,16 +127,23 @@ export default function Fullstack() {
     const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newPhone = event.target.value;
         setPhone(newPhone);
+        /*const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
+        setTverrsum(newTverrsum);*/
     }
 
     const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newBirthday = event.target.value;
         setBirthday(newBirthday);
+        /* console.log("Skuddår: " + leapYear);
+         isLeapYear(newBirthday);*/
     }
+
+    /**
+     * Oppdaterer state på variablene når det gjøres endringer i inputfeltet i form
+     */
 
 
     //Innsending av kontaktskjema
-
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Forhindrer formen i å sende en HTTP POST request
         userPost(name, address, phone, birthday);
@@ -151,6 +210,7 @@ export default function Fullstack() {
     const usersDelete = (userId: number) => {
         axios.delete(`http://localhost:5177/api/Users/${userId}`)
             .then(response => {
+                // Behandle responsen her
                 console.log(response.data);
                 usersGet();
             })
@@ -160,30 +220,10 @@ export default function Fullstack() {
             
     }
 
-    //Beregner statistikk
+    /**
+ * apiServices
+ */
 
-    const calculateStatistics = () => {
-        const totalUsers = users.length;
-        let sumNameLength = 0;
-        let leapYearBirthdays = 0;
-    
-        users.forEach(user => {
-            sumNameLength += user.name.length;
-            if (user.isLeapYearBirthday) { 
-                leapYearBirthdays++;
-            }
-        });
-    
-        const averageNameLength = totalUsers > 0 ? sumNameLength / totalUsers : 0;
-    
-        return {
-            averageNameLength,
-            leapYearBirthdays,
-            totalUsers
-        };
-    };
-
-    const { averageNameLength, leapYearBirthdays, totalUsers } = calculateStatistics();
 
 
     return (
@@ -245,9 +285,9 @@ export default function Fullstack() {
 
             <div>
                 <h2>Statistikk</h2>
-                <p>Gjennomsnittlig lengde på navn: {averageNameLength}</p>
-                <p>Antall personer født i skuddår: {leapYearBirthdays}</p>
-                <p>Totalt antall brukere: {totalUsers}</p>
+                <p>Antall brukere: </p>
+                <p>Antall født i skuddår: </p>
+                <p>Gjennomsnittlig lengde på navn: </p>
 
             </div>
         </div>

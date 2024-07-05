@@ -3,6 +3,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Task from './Task';
 import axios from 'axios';
 
+
 type User = {
     id: number;
     name: string;
@@ -25,112 +26,12 @@ export default function Fullstack() {
     const [editedUser, setEditedUser] = useState({ name: '', address: '', phone: '', birthday: '' });
     
 
-    //Henter Users når siden lastes, og når brukere oppdateres
-    useEffect(() => {
-        usersGet();
-    }, []);
-
-
-    /** 
-     * Update User (Hjelpefunksjoner til usersPut)
-     */
-
-
-
     const handleEditClick = (user: User) => {
         setEditingUserId(user.id);
         setEditedUser({ ...user });
     };
 
     const handleUpdateClick = () => {
-        usersPut();
-        setEditingUserId(0);
-    };
-
-    const handleUpdateUserChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setEditedUser(prev => ({ ...prev, [name]: value }));
-    };
-
-//Setter datoen på riktig format
-
-    function formatDate(dateString: string) {
-        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('nb-NO', options);
-    }
-
-
-    /**
-     * Oppdaterer state på variablene når det gjøres endringer i inputfeltet i form
-     */
-
-    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    }
-
-    const handleaddressChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setaddress(event.target.value);
-    }
-
-    const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newPhone = event.target.value;
-        setPhone(newPhone);
-    }
-
-    const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newBirthday = event.target.value;
-        setBirthday(newBirthday);
-    }
-
-
-    //Innsending av kontaktskjema
-
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Forhindrer formen i å sende en HTTP POST request
-        userPost(name, address, phone, birthday);
-        
-    };
-    
-
-
-
-    /**
-     * apiServices
-     */
-
-    const usersGet = () => {
-        axios.get('http://localhost:5177/api/Users')
-            .then(response => {
-                // Behandle responsen her
-                console.log(response.data);
-                setUsers(response.data);
-               
-             
-            })
-            .catch(error => {
-                console.log(error.response);
-            });
-    }
-
-    const userPost = (newName: string, newAdress: string, newPhone: string, newBirthday: string) => {
-        axios.post('http://localhost:5177/api/Users', {
-            id: 0,
-            name: newName,
-            address: newAdress,
-            phone: newPhone,
-            birthday: newBirthday
-        })
-            .then(response => {
-                console.log(response);
-                usersGet();
-               
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
-
-    const usersPut = () => {
         axios.put(`http://localhost:5177/api/Users/${editingUserId}`, {
             id: editingUserId,
             name: editedUser.name,
@@ -146,51 +47,123 @@ export default function Fullstack() {
             .catch(error => {
                 console.log(error);
             })
+        setEditingUserId(0);
+        // Oppdater brukerlisten her etter vellykket oppdatering
+    };
+
+    const handleUpdateUserChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditedUser(prev => ({ ...prev, [name]: value }));
+    };
+
+    function formatDate(dateString: string) {
+        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('nb-NO', options);
     }
 
+    /*function isLeapYear(birthdayDate: string) {
+        const year = new Date(birthdayDate).getFullYear();
+        console.log("Function: isLeapYear");
+        console.log("Birthday: " + birthdayDate);
+        console.log("Year: " + year);
+        if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+            setLeapYear("Ja");
+            console.log('setLeapYear("Ja")');
+        } else {
+            setLeapYear("Nei");
+            console.log('setLeapYear("Nei")');
+        };
+    }*/
+
+    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+    }
+
+    const handleaddressChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setaddress(event.target.value);
+    }
+
+    const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const newPhone = event.target.value;
+        setPhone(newPhone);
+        /*const newTverrsum = newPhone.split('').reduce((sum, num) => sum + parseInt(num, 10), 0);
+        setTverrsum(newTverrsum);*/
+    }
+
+    const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const newBirthday = event.target.value;
+        setBirthday(newBirthday);
+       /* console.log("Skuddår: " + leapYear);
+        isLeapYear(newBirthday);*/
+    }
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault(); // Forhindrer formen i å sende en HTTP POST request
+        userPost(name, address, phone, birthday); 
+       
+    };
+
+
+
+    useEffect(() => {
+        usersGet();
+    }, []);
+
+  
+/**
+ * apiServices
+ */
     const usersDelete = (userId: number) => {
         axios.delete(`http://localhost:5177/api/Users/${userId}`)
             .then(response => {
+                // Behandle responsen her
                 console.log(response.data);
+                setUsers(response.data);
                 usersGet();
             })
             .catch(error => {
                 console.log(error.response);
             });
-            
     }
 
-    //Beregner statistikk
+    const userPost = (newName: string, newAdress: string, newPhone: string, newBirthday: string) =>{
+        axios.post('http://localhost:5177/api/Users', {
+            id: 0,
+            name: newName,
+            address: newAdress,
+            phone: newPhone,
+            birthday: newBirthday
+        })
+            .then(response => {
+                console.log(response);
+                usersGet();
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+    
+    const usersGet = () => {
+        axios.get('http://localhost:5177/api/Users')
+            .then(response => {
+                // Behandle responsen her
+                console.log(response.data);
+                setUsers(response.data);
+            })
+            .catch(error => {
+                console.log(error.response);
+            });
+    }
 
-    const calculateStatistics = () => {
-        const totalUsers = users.length;
-        let sumNameLength = 0;
-        let leapYearBirthdays = 0;
-    
-        users.forEach(user => {
-            sumNameLength += user.name.length;
-            if (user.isLeapYearBirthday) { 
-                leapYearBirthdays++;
-            }
-        });
-    
-        const averageNameLength = totalUsers > 0 ? sumNameLength / totalUsers : 0;
-    
-        return {
-            averageNameLength,
-            leapYearBirthdays,
-            totalUsers
-        };
-    };
+    /**
+ * apiServices
+ */
 
-    const { averageNameLength, leapYearBirthdays, totalUsers } = calculateStatistics();
 
 
     return (
         <div>
             <h1>Frontend og backend</h1>
-           
-            
             <form onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
                     <label htmlFor="name">Navn<span className='text-red-500'> *</span></label>
@@ -244,11 +217,8 @@ export default function Fullstack() {
             </div>
 
             <div>
-                <h2>Statistikk</h2>
-                <p>Gjennomsnittlig lengde på navn: {averageNameLength}</p>
-                <p>Antall personer født i skuddår: {leapYearBirthdays}</p>
-                <p>Totalt antall brukere: {totalUsers}</p>
 
+           
             </div>
         </div>
 
